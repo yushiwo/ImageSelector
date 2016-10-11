@@ -13,7 +13,7 @@
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name="com.yongchun.library.view.ImagePreviewActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar" />
+            android:theme="@style/MyFullScreenTheme" />
         <activity
             android:name="com.yongchun.library.view.ImageCropActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />

@@ -1,5 +1,6 @@
 package com.yongchun.library.view;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -66,7 +67,8 @@ public class ImagePreviewActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+//        getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,  WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_image_preview);
         initView();
         registerListener();
@@ -122,6 +124,7 @@ public class ImagePreviewActivity extends AppCompatActivity {
             }
         });
         checkboxSelect.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("StringFormatMatches")
             @Override
             public void onClick(View v) {
                 boolean isChecked = checkboxSelect.isChecked();
@@ -207,11 +210,11 @@ public class ImagePreviewActivity extends AppCompatActivity {
         barLayout.setVisibility(isShowBar ? View.GONE : View.VISIBLE);
         toolbar.setVisibility(isShowBar ? View.GONE : View.VISIBLE);
         selectBarLayout.setVisibility(isShowBar ? View.GONE : View.VISIBLE);
-        if (isShowBar) {
-            hideStatusBar();
-        } else {
-            showStatusBar();
-        }
+//        if (isShowBar) {
+//            hideStatusBar();
+//        } else {
+//            showStatusBar();
+//        }
         isShowBar = !isShowBar;
     }
     public void onDoneClick(boolean isDone){
