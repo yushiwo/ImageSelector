@@ -4,15 +4,9 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -202,29 +196,6 @@ public class ImagePreviewActivity extends AppCompatActivity {
             }
         });
     }
-
-
-//    public class SimpleFragmentAdapter extends FragmentStatePagerAdapter {
-//
-//        ArrayList<LocalMedia> mDatas;
-//
-//        public SimpleFragmentAdapter(FragmentManager fm, ArrayList<LocalMedia> mDatas) {
-//            super(fm);
-//
-//            this.mDatas = mDatas;
-//        }
-//
-//        @Override
-//        public Fragment getItem(int position) {
-//            return ImagePreviewFragment.getInstance(mDatas.get(position).getPath());
-//        }
-//
-//        @Override
-//        public int getCount() {
-//            return mDatas.size();
-//        }
-//
-//    }
 
     @SuppressLint("StringFormatMatches")
     public void onSelectNumChange() {
