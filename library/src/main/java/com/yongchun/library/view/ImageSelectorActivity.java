@@ -179,7 +179,7 @@ public class ImageSelectorActivity extends AppCompatActivity {
             @Override
             public void onPictureClick(LocalMedia media, int position) {
                 if (enablePreview) {
-                    startPreview(imageAdapter.getImages(), position);
+                    startPreview(imageAdapter.getImages(), position, 0);
                 } else if (enableCrop) {
                     startCrop(media.getPath());
                 } else {
@@ -204,7 +204,7 @@ public class ImageSelectorActivity extends AppCompatActivity {
         previewText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startPreview(imageAdapter.getSelectedImages(), 0);
+                startPreview(imageAdapter.getSelectedImages(), 0, 1);
             }
         });
     }
@@ -258,8 +258,8 @@ public class ImageSelectorActivity extends AppCompatActivity {
         }
     }
 
-    public void startPreview(List<LocalMedia> previewImages, int position) {
-        ImagePreviewActivity.startPreview(this, previewImages, imageAdapter.getSelectedImages(), maxSelectNum, position);
+    public void startPreview(List<LocalMedia> previewImages, int position, int mode) {
+        ImagePreviewActivity.startPreview(this, previewImages, imageAdapter.getSelectedImages(), maxSelectNum, position, mode);
     }
 
     public void startCrop(String path) {

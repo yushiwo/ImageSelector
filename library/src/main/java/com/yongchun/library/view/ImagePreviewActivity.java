@@ -23,7 +23,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.yongchun.library.R;
-import com.yongchun.library.interfaces.LocalMediaProvider;
+import com.yongchun.library.adapter.DeletePreviewPagerAdapter;
+import com.yongchun.library.adapter.SimplePreviewPagerAdapter;
 import com.yongchun.library.model.LocalMedia;
 import com.yongchun.library.widget.PreviewViewPager;
 
@@ -33,15 +34,17 @@ import java.util.List;
 /**
  * Created by dee on 15/11/24.
  */
-public class ImagePreviewActivity extends AppCompatActivity implements LocalMediaProvider{
+public class ImagePreviewActivity extends AppCompatActivity {
     public static final int REQUEST_PREVIEW = 68;
     public static final String EXTRA_PREVIEW_LIST = "previewList";
     public static final String EXTRA_PREVIEW_SELECT_LIST = "previewSelectList";
     public static final String EXTRA_MAX_SELECT_NUM = "maxSelectNum";
     public static final String EXTRA_POSITION = "position";
+    public static final String  EXTRA_PREVIEW_MODE = "previewMode";
 
     public static final String OUTPUT_LIST = "outputList";
     public static final String OUTPUT_ISDONE = "isDone";
+
 
     private LinearLayout barLayout;
     private RelativeLayout selectBarLayout;
@@ -49,13 +52,15 @@ public class ImagePreviewActivity extends AppCompatActivity implements LocalMedi
     private TextView doneText;
     private CheckBox checkboxSelect;
     private PreviewViewPager viewPager;
-    private SimpleFragmentAdapter mAdapter;
+    private SimplePreviewPagerAdapter mSimpleAdapter;
+    private DeletePreviewPagerAdapter mDeleteAdapter;
 
     private Button mDeleteButton;
 
 
     private int position;
     private int maxSelectNum;
+    private int previewMode; //预览的两种模式,可删除或者不可删除,m默认为0,不可删除
     /** 所有的图片列表 */
     private ArrayList<LocalMedia> images = new ArrayList<>();
     /** 选中的图片列表 */
@@ -65,20 +70,19 @@ public class ImagePreviewActivity extends AppCompatActivity implements LocalMedi
     private boolean isShowBar = true;
 
 
-    public static void startPreview(Activity context, List<LocalMedia> images, List<LocalMedia> selectImages, int maxSelectNum, int position) {
+    public static void startPreview(Activity context, List<LocalMedia> images, List<LocalMedia> selectImages, int maxSelectNum, int position, int mode) {
         Intent intent = new Intent(context, ImagePreviewActivity.class);
         intent.putExtra(EXTRA_PREVIEW_LIST, (ArrayList) images);
         intent.putExtra(EXTRA_PREVIEW_SELECT_LIST, (ArrayList) selectImages);
         intent.putExtra(EXTRA_POSITION, position);
         intent.putExtra(EXTRA_MAX_SELECT_NUM, maxSelectNum);
+        intent.putExtra(EXTRA_PREVIEW_MODE, mode);
         context.startActivityForResult(intent, REQUEST_PREVIEW);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,  WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_image_preview);
         initView();
         registerListener();
@@ -89,6 +93,7 @@ public class ImagePreviewActivity extends AppCompatActivity implements LocalMedi
         selectImages = (ArrayList<LocalMedia>) getIntent().getSerializableExtra(EXTRA_PREVIEW_SELECT_LIST);
         maxSelectNum = getIntent().getIntExtra(EXTRA_MAX_SELECT_NUM, 9);
         position = getIntent().getIntExtra(EXTRA_POSITION, 1);
+        previewMode = getIntent().getIntExtra(EXTRA_PREVIEW_MODE, 0);
 
         barLayout = (LinearLayout) findViewById(R.id.bar_layout);
         selectBarLayout = (RelativeLayout) findViewById(R.id.select_bar_layout);
@@ -106,13 +111,22 @@ public class ImagePreviewActivity extends AppCompatActivity implements LocalMedi
         onImageSwitch(position);
 
 
+        mSimpleAdapter = new SimplePreviewPagerAdapter(getSupportFragmentManager(), images);
+        mDeleteAdapter = new DeletePreviewPagerAdapter(getSupportFragmentManager(), images);
+
         viewPager = (PreviewViewPager) findViewById(R.id.preview_pager);
-        mAdapter = new SimpleFragmentAdapter(getSupportFragmentManager(), this);
-        viewPager.setAdapter(mAdapter);
-//        viewPager.setAdapter(new SimpleFragmentAdapter(getSupportFragmentManager(), images));
-        viewPager.setCurrentItem(position);
 
         mDeleteButton = (Button)findViewById(R.id.btn_delete);
+
+        if(previewMode == 1){
+            mDeleteButton.setVisibility(View.VISIBLE);
+            viewPager.setAdapter(mDeleteAdapter);
+            viewPager.setCurrentItem(position);
+        }else{
+            mDeleteButton.setVisibility(View.GONE);
+            viewPager.setAdapter(mSimpleAdapter);
+            viewPager.setCurrentItem(position);
+        }
     }
 
     public void registerListener() {
@@ -172,76 +186,45 @@ public class ImagePreviewActivity extends AppCompatActivity implements LocalMedi
             @Override
             public void onClick(View v) {
                 LocalMedia image = images.get(viewPager.getCurrentItem());
-                for (LocalMedia media : selectImages) {
-                    if (media.getPath().equals(image.getPath())) {
-                        Log.d("zr", "delete");
-                        selectImages.remove(media);
-                        images.remove(media);
-                        break;
-                    }
-                }
+//                for (LocalMedia media : selectImages) {
+//                    if (media.getPath().equals(image.getPath())) {
+//                        Log.d("zr", "delete");
+//                        selectImages.remove(media);
+//                        images.remove(media);
+//                        break;
+//                    }
+//                }
 
-                viewPager.removeAllViewsInLayout();
-                mAdapter.notifyChangeInPosition(1);
-                mAdapter.notifyDataSetChanged();
+                int position = viewPager.getCurrentItem();
+                images.remove(position);
+                selectImages.remove(position);
+                mDeleteAdapter.updateData(images);
             }
         });
     }
 
-    @Override
-    public LocalMedia getLocalMediaForPosition(int position) {
-        return images.get(position);
-    }
 
-    @Override
-    public int getCount() {
-        return images.size();
-    }
-
-    public class SimpleFragmentAdapter extends FragmentPagerAdapter {
-
-        LocalMediaProvider mProvider;
-        private long baseId = 0;
-
-        public SimpleFragmentAdapter(FragmentManager fm, LocalMediaProvider provider) {
-            super(fm);
-
-            this.mProvider =  provider;
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return ImagePreviewFragment.getInstance(mProvider.getLocalMediaForPosition(position).getPath());
-        }
-
-        @Override
-        public int getCount() {
-            return mProvider.getCount();
-        }
-
-        @Override
-        public int getItemPosition(Object object) {
-            return PagerAdapter.POSITION_NONE;
-        }
-
-
-
-        @Override
-        public long getItemId(int position) {
-            // give an ID different from position when position has been changed
-            return baseId + position;
-        }
-
-        /**
-         * Notify that the position of a fragment has been changed.
-         * Create a new ID for each position to force recreation of the fragment
-         * @param n number of items which have been changed
-         */
-        public void notifyChangeInPosition(int n) {
-            // shift the ID returned by getItemId outside the range of all previous fragments
-            baseId += getCount() + n;
-        }
-    }
+//    public class SimpleFragmentAdapter extends FragmentStatePagerAdapter {
+//
+//        ArrayList<LocalMedia> mDatas;
+//
+//        public SimpleFragmentAdapter(FragmentManager fm, ArrayList<LocalMedia> mDatas) {
+//            super(fm);
+//
+//            this.mDatas = mDatas;
+//        }
+//
+//        @Override
+//        public Fragment getItem(int position) {
+//            return ImagePreviewFragment.getInstance(mDatas.get(position).getPath());
+//        }
+//
+//        @Override
+//        public int getCount() {
+//            return mDatas.size();
+//        }
+//
+//    }
 
     @SuppressLint("StringFormatMatches")
     public void onSelectNumChange() {
