@@ -1,5 +1,6 @@
 package com.yongchun.library.view;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -155,6 +156,7 @@ public class ImageSelectorActivity extends AppCompatActivity {
             }
         });
         imageAdapter.setOnImageSelectChangedListener(new ImageListAdapter.OnImageSelectChangedListener() {
+            @SuppressLint("StringFormatMatches")
             @Override
             public void onChange(List<LocalMedia> selectImages) {
                 boolean enable = selectImages.size() != 0;

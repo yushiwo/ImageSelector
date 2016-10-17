@@ -7,11 +7,15 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -19,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.yongchun.library.R;
+import com.yongchun.library.interfaces.LocalMediaProvider;
 import com.yongchun.library.model.LocalMedia;
 import com.yongchun.library.widget.PreviewViewPager;
 
@@ -28,7 +33,7 @@ import java.util.List;
 /**
  * Created by dee on 15/11/24.
  */
-public class ImagePreviewActivity extends AppCompatActivity {
+public class ImagePreviewActivity extends AppCompatActivity implements LocalMediaProvider{
     public static final int REQUEST_PREVIEW = 68;
     public static final String EXTRA_PREVIEW_LIST = "previewList";
     public static final String EXTRA_PREVIEW_SELECT_LIST = "previewSelectList";
@@ -44,12 +49,17 @@ public class ImagePreviewActivity extends AppCompatActivity {
     private TextView doneText;
     private CheckBox checkboxSelect;
     private PreviewViewPager viewPager;
+    private SimpleFragmentAdapter mAdapter;
+
+    private Button mDeleteButton;
 
 
     private int position;
     private int maxSelectNum;
-    private List<LocalMedia> images = new ArrayList<>();
-    private List<LocalMedia> selectImages = new ArrayList<>();
+    /** 所有的图片列表 */
+    private ArrayList<LocalMedia> images = new ArrayList<>();
+    /** 选中的图片列表 */
+    private ArrayList<LocalMedia> selectImages = new ArrayList<>();
 
 
     private boolean isShowBar = true;
@@ -75,8 +85,8 @@ public class ImagePreviewActivity extends AppCompatActivity {
     }
 
     public void initView() {
-        images = (List<LocalMedia>) getIntent().getSerializableExtra(EXTRA_PREVIEW_LIST);
-        selectImages = (List<LocalMedia>) getIntent().getSerializableExtra(EXTRA_PREVIEW_SELECT_LIST);
+        images = (ArrayList<LocalMedia>) getIntent().getSerializableExtra(EXTRA_PREVIEW_LIST);
+        selectImages = (ArrayList<LocalMedia>) getIntent().getSerializableExtra(EXTRA_PREVIEW_SELECT_LIST);
         maxSelectNum = getIntent().getIntExtra(EXTRA_MAX_SELECT_NUM, 9);
         position = getIntent().getIntExtra(EXTRA_POSITION, 1);
 
@@ -97,8 +107,12 @@ public class ImagePreviewActivity extends AppCompatActivity {
 
 
         viewPager = (PreviewViewPager) findViewById(R.id.preview_pager);
-        viewPager.setAdapter(new SimpleFragmentAdapter(getSupportFragmentManager()));
+        mAdapter = new SimpleFragmentAdapter(getSupportFragmentManager(), this);
+        viewPager.setAdapter(mAdapter);
+//        viewPager.setAdapter(new SimpleFragmentAdapter(getSupportFragmentManager(), images));
         viewPager.setCurrentItem(position);
+
+        mDeleteButton = (Button)findViewById(R.id.btn_delete);
     }
 
     public void registerListener() {
@@ -153,24 +167,83 @@ public class ImagePreviewActivity extends AppCompatActivity {
                 onDoneClick(true);
             }
         });
+
+        mDeleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LocalMedia image = images.get(viewPager.getCurrentItem());
+                for (LocalMedia media : selectImages) {
+                    if (media.getPath().equals(image.getPath())) {
+                        Log.d("zr", "delete");
+                        selectImages.remove(media);
+                        images.remove(media);
+                        break;
+                    }
+                }
+
+                viewPager.removeAllViewsInLayout();
+                mAdapter.notifyChangeInPosition(1);
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+    @Override
+    public LocalMedia getLocalMediaForPosition(int position) {
+        return images.get(position);
+    }
+
+    @Override
+    public int getCount() {
+        return images.size();
     }
 
     public class SimpleFragmentAdapter extends FragmentPagerAdapter {
-        public SimpleFragmentAdapter(FragmentManager fm) {
+
+        LocalMediaProvider mProvider;
+        private long baseId = 0;
+
+        public SimpleFragmentAdapter(FragmentManager fm, LocalMediaProvider provider) {
             super(fm);
+
+            this.mProvider =  provider;
         }
 
         @Override
         public Fragment getItem(int position) {
-            return ImagePreviewFragment.getInstance(images.get(position).getPath());
+            return ImagePreviewFragment.getInstance(mProvider.getLocalMediaForPosition(position).getPath());
         }
 
         @Override
         public int getCount() {
-            return images.size();
+            return mProvider.getCount();
+        }
+
+        @Override
+        public int getItemPosition(Object object) {
+            return PagerAdapter.POSITION_NONE;
+        }
+
+
+
+        @Override
+        public long getItemId(int position) {
+            // give an ID different from position when position has been changed
+            return baseId + position;
+        }
+
+        /**
+         * Notify that the position of a fragment has been changed.
+         * Create a new ID for each position to force recreation of the fragment
+         * @param n number of items which have been changed
+         */
+        public void notifyChangeInPosition(int n) {
+            // shift the ID returned by getItemId outside the range of all previous fragments
+            baseId += getCount() + n;
         }
     }
 
+    @SuppressLint("StringFormatMatches")
     public void onSelectNumChange() {
         boolean enable = selectImages.size() != 0;
         doneText.setEnabled(enable);
