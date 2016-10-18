@@ -40,9 +40,10 @@ public class FolderWindow extends PopupWindow {
         this.setHeight(ScreenUtils.getScreenHeight(context) - ScreenUtils.dip2px(context, 96));
         this.setAnimationStyle(R.style.WindowStyle);
         this.setFocusable(true);
+        this.setTouchable(true);
         this.setOutsideTouchable(true);
-        this.update();
         this.setBackgroundDrawable(new ColorDrawable(Color.argb(153, 0, 0, 0)));
+        this.update();
 
         initView();
         registerListener();
@@ -57,6 +58,7 @@ public class FolderWindow extends PopupWindow {
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setAdapter(adapter);
     }
+
 
     public void registerListener() {
 

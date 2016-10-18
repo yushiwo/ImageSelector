@@ -54,7 +54,7 @@ public class ImageSelectorActivity extends AppCompatActivity {
     private boolean enablePreview = true;
     private boolean enableCrop = false;
 
-    private int spanCount = 3;
+    private int spanCount = 4;
 
     private Toolbar toolbar;
     private TextView doneText;
@@ -145,6 +145,7 @@ public class ImageSelectorActivity extends AppCompatActivity {
                 finish();
             }
         });
+
         folderLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

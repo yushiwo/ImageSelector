@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black"
@@ -28,8 +28,10 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/folder_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:layout_below="@id/toolbar"
+        android:background="@android:color/white"
         android:scrollbars="none" />
 
     <RelativeLayout
@@ -37,6 +39,7 @@
         android:layout_height="@dimen/bar_height"
         android:layout_alignParentBottom="true"
         android:background="@color/bar_grey_90"
+        android:clickable="false"
         android:gravity="center_vertical">
 
         <LinearLayout
@@ -78,4 +81,4 @@
             android:text="@string/preview"/>
     </RelativeLayout>
 
-</RelativeLayout>
+</LinearLayout>
