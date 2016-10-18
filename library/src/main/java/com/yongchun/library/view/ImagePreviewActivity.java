@@ -169,6 +169,7 @@ public class ImagePreviewActivity extends AppCompatActivity {
                 onSelectNumChange();
             }
         });
+
         doneText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -179,20 +180,13 @@ public class ImagePreviewActivity extends AppCompatActivity {
         mDeleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LocalMedia image = images.get(viewPager.getCurrentItem());
-//                for (LocalMedia media : selectImages) {
-//                    if (media.getPath().equals(image.getPath())) {
-//                        Log.d("zr", "delete");
-//                        selectImages.remove(media);
-//                        images.remove(media);
-//                        break;
-//                    }
-//                }
-
                 int position = viewPager.getCurrentItem();
                 images.remove(position);
                 selectImages.remove(position);
                 mDeleteAdapter.updateData(images);
+
+                onSelectNumChange();
+                toolbar.setTitle(viewPager.getCurrentItem() + 1 + "/" + images.size());
             }
         });
     }
@@ -208,6 +202,10 @@ public class ImagePreviewActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * 切换图片的时候判断这张图片是否被选中
+     * @param position
+     */
     public void onImageSwitch(int position) {
         checkboxSelect.setChecked(isSelected(images.get(position)));
     }
@@ -220,28 +218,11 @@ public class ImagePreviewActivity extends AppCompatActivity {
         }
         return false;
     }
-
-    private void hideStatusBar() {
-        WindowManager.LayoutParams attrs = getWindow().getAttributes();
-        attrs.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
-        getWindow().setAttributes(attrs);
-    }
-
-    private void showStatusBar() {
-        WindowManager.LayoutParams attrs = getWindow().getAttributes();
-        attrs.flags &= ~WindowManager.LayoutParams.FLAG_FULLSCREEN;
-        getWindow().setAttributes(attrs);
-    }
-
+    
     public void switchBarVisibility() {
         barLayout.setVisibility(isShowBar ? View.GONE : View.VISIBLE);
         toolbar.setVisibility(isShowBar ? View.GONE : View.VISIBLE);
         selectBarLayout.setVisibility(isShowBar ? View.GONE : View.VISIBLE);
-//        if (isShowBar) {
-//            hideStatusBar();
-//        } else {
-//            showStatusBar();
-//        }
         isShowBar = !isShowBar;
     }
     public void onDoneClick(boolean isDone){

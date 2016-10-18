@@ -1,5 +1,6 @@
 package com.yongchun.library.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -41,6 +42,7 @@ public class ImageFolderAdapter extends RecyclerView.Adapter<ImageFolderAdapter.
         return new ViewHolder(itemView);
     }
 
+    @SuppressLint("StringFormatMatches")
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
         final LocalMediaFolder folder = folders.get(position);
