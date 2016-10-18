@@ -181,12 +181,15 @@ public class ImagePreviewActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 int position = viewPager.getCurrentItem();
-                images.remove(position);
                 selectImages.remove(position);
                 mDeleteAdapter.updateData(images);
 
                 onSelectNumChange();
                 toolbar.setTitle(viewPager.getCurrentItem() + 1 + "/" + images.size());
+                // 全部删光,关闭预览界面
+                if(selectImages.size() <= 0){
+                    onDoneClick(true);
+                }
             }
         });
     }
@@ -218,7 +221,7 @@ public class ImagePreviewActivity extends AppCompatActivity {
         }
         return false;
     }
-    
+
     public void switchBarVisibility() {
         barLayout.setVisibility(isShowBar ? View.GONE : View.VISIBLE);
         toolbar.setVisibility(isShowBar ? View.GONE : View.VISIBLE);
