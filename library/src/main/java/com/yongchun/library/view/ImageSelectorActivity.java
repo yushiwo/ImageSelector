@@ -45,6 +45,7 @@ public class ImageSelectorActivity extends AppCompatActivity {
     public final static String EXTRA_ENABLE_PREVIEW = "EnablePreview";
     public final static String EXTRA_ENABLE_CROP = "EnableCrop";
     public final static String EXTRA_MAX_SELECT_NUM = "MaxSelectNum";
+    public final static String EXTRA_SELECTED_IMAGES = "SelectedImages";
 
     public final static int MODE_MULTIPLE = 1;
     public final static int MODE_SINGLE = 2;
@@ -92,13 +93,15 @@ public class ImageSelectorActivity extends AppCompatActivity {
         intent.putExtra(EXTRA_ENABLE_PREVIEW, enablePreview);
         intent.putExtra(EXTRA_ENABLE_CROP, enableCrop);
 
-        if(selectedImageList != null && selectedImageList.size() > 0){
-            selectedImages = new ArrayList<>();
-            for(int i = 0; i < selectedImageList.size(); i ++){
-                LocalMedia media = new LocalMedia(selectedImageList.get(i) ,0 ,0);
-                selectedImages.add(media);
+        ArrayList<LocalMedia> sImages = null;
+        if (selectedImageList != null && selectedImageList.size() > 0) {
+            sImages = new ArrayList<>();
+            for (int i = 0; i < selectedImageList.size(); i++) {
+                LocalMedia media = new LocalMedia(selectedImageList.get(i), 0, 0);
+                sImages.add(media);
             }
         }
+        intent.putExtra(EXTRA_SELECTED_IMAGES, (ArrayList) sImages);
         activity.startActivityForResult(intent, REQUEST_IMAGE);
     }
 
@@ -112,6 +115,7 @@ public class ImageSelectorActivity extends AppCompatActivity {
         showCamera = getIntent().getBooleanExtra(EXTRA_SHOW_CAMERA, true);
         enablePreview = getIntent().getBooleanExtra(EXTRA_ENABLE_PREVIEW, true);
         enableCrop = getIntent().getBooleanExtra(EXTRA_ENABLE_CROP, false);
+        selectedImages = (ArrayList<LocalMedia>) getIntent().getSerializableExtra(EXTRA_SELECTED_IMAGES);
 
         if (selectMode == MODE_MULTIPLE) {
             enableCrop = false;

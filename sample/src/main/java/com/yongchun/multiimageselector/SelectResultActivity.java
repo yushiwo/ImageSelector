@@ -94,12 +94,22 @@ public class SelectResultActivity extends AppCompatActivity {
                 public void onItemClick(int position) {
                     Log.d("zr", "click " + position);
 
-                    ImagePreviewActivity.startPreview();
+                    ImagePreviewActivity.startDeletePreview(SelectResultActivity.this, images, 9, position);
                 }
             });
+        }else if(resultCode == RESULT_OK && requestCode == ImagePreviewActivity.REQUEST_PREVIEW){
+            images = (ArrayList<String>) data.getSerializableExtra(ImageSelectorActivity.REQUEST_OUTPUT);
+            mGridAdapter = new GridAdapter(this, images);
+            resultRecyclerView.setAdapter(mGridAdapter);
 
+            mGridAdapter.setOnItemClickListener(new GridAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(int position) {
+                    Log.d("zr", "click " + position);
 
-//            startActivity(new Intent(this,SelectResultActivity.class).putExtra(SelectResultActivity.EXTRA_IMAGES,images));
+                    ImagePreviewActivity.startDeletePreview(SelectResultActivity.this, images, 9, position);
+                }
+            });
         }
     }
 

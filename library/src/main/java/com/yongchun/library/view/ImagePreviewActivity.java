@@ -25,6 +25,10 @@ import com.yongchun.library.widget.PreviewViewPager;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.yongchun.library.view.ImageSelectorActivity.REQUEST_IMAGE;
+import static com.yongchun.library.view.ImageSelectorActivity.REQUEST_OUTPUT;
+import static com.yongchun.library.view.ImageSelectorActivity.selectedImages;
+
 /**
  * Created by dee on 15/11/24.
  */
@@ -80,6 +84,23 @@ public class ImagePreviewActivity extends AppCompatActivity {
         intent.putExtra(EXTRA_POSITION, position);
         intent.putExtra(EXTRA_MAX_SELECT_NUM, maxSelectNum);
         intent.putExtra(EXTRA_PREVIEW_MODE, mode);
+        context.startActivityForResult(intent, REQUEST_PREVIEW);
+    }
+
+    public static void startDeletePreview(Activity context, ArrayList<String> imageList, int maxSelectNum, int position) {
+        ArrayList<LocalMedia> holeImages = new ArrayList<>();
+        ArrayList<LocalMedia> selectedImages = new ArrayList<>();
+        for(int i = 0; i < imageList.size(); i ++){
+            LocalMedia media = new LocalMedia(imageList.get(i), 0, 0);
+            holeImages.add(media);
+            selectedImages.add(media);
+        }
+        Intent intent = new Intent(context, ImagePreviewActivity.class);
+        intent.putExtra(EXTRA_PREVIEW_LIST, (ArrayList) holeImages);
+        intent.putExtra(EXTRA_PREVIEW_SELECT_LIST, (ArrayList) selectedImages);
+        intent.putExtra(EXTRA_POSITION, position);
+        intent.putExtra(EXTRA_MAX_SELECT_NUM, maxSelectNum);
+        intent.putExtra(EXTRA_PREVIEW_MODE, 1);
         context.startActivityForResult(intent, REQUEST_PREVIEW);
     }
 
@@ -151,7 +172,11 @@ public class ImagePreviewActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onDoneClick(false);
+                if(previewMode == 0){
+                    onDoneClick(false);
+                }else{
+                    onResult(selectImages);
+                }
             }
         });
         checkboxSelect.setOnClickListener(new View.OnClickListener() {
@@ -191,13 +216,15 @@ public class ImagePreviewActivity extends AppCompatActivity {
             public void onClick(View v) {
                 int position = viewPager.getCurrentItem();
                 selectImages.remove(position);
-                mDeleteAdapter.updateData(images);
+                images.remove(position);
+                mDeleteAdapter.updateData(selectImages);
 
                 onSelectNumChange();
                 toolbar.setTitle(viewPager.getCurrentItem() + 1 + "/" + images.size());
                 // 全部删光,关闭预览界面
                 if(selectImages.size() <= 0){
-                    onDoneClick(true);
+//                    onDoneClick(true);
+                    onResult(selectImages);
                 }
             }
         });
@@ -242,6 +269,15 @@ public class ImagePreviewActivity extends AppCompatActivity {
         intent.putExtra(OUTPUT_LIST,(ArrayList)selectImages);
         intent.putExtra(OUTPUT_ISDONE,isDone);
         setResult(RESULT_OK,intent);
+        finish();
+    }
+
+    public void onResult(ArrayList<LocalMedia> medias) {
+        ArrayList<String> images = new ArrayList<>();
+        for (LocalMedia media : medias) {
+            images.add(media.getPath());
+        }
+        setResult(RESULT_OK, new Intent().putStringArrayListExtra(REQUEST_OUTPUT, images));
         finish();
     }
 }
