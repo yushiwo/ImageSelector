@@ -52,7 +52,7 @@ public class ImagePreviewActivity extends AppCompatActivity {
     private LinearLayout mDoneLayout;
     private TextView mDoneNumTextView;
 
-    private Button mDeleteButton;
+    private ImageButton mDeleteButton;
 
 
 
@@ -127,7 +127,7 @@ public class ImagePreviewActivity extends AppCompatActivity {
         mDoneLayout = (LinearLayout)findViewById(R.id.done_layout);
         mDoneNumTextView = (TextView)findViewById(R.id.done_num_text);
 
-
+        mTitleTextView.setText(position + 1 + "/" + images.size());
 
         onSelectNumChange();
 
@@ -140,14 +140,18 @@ public class ImagePreviewActivity extends AppCompatActivity {
 
         viewPager = (PreviewViewPager) findViewById(R.id.preview_pager);
 
-        mDeleteButton = (Button)findViewById(R.id.btn_delete);
+        mDeleteButton = (ImageButton) findViewById(R.id.btn_delete);
 
         if(previewMode == 1){
             mDeleteButton.setVisibility(View.VISIBLE);
+            checkboxSelect.setVisibility(View.GONE);
+            mBottomLayout.setVisibility(View.GONE);
             viewPager.setAdapter(mDeleteAdapter);
             viewPager.setCurrentItem(position);
         }else{
             mDeleteButton.setVisibility(View.GONE);
+            checkboxSelect.setVisibility(View.VISIBLE);
+            mBottomLayout.setVisibility(View.VISIBLE);
             viewPager.setAdapter(mSimpleAdapter);
             viewPager.setCurrentItem(position);
         }
@@ -170,7 +174,7 @@ public class ImagePreviewActivity extends AppCompatActivity {
             }
         });
 
-        mTitleLayout.setOnClickListener(new View.OnClickListener() {
+        mBackImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(previewMode == 0){
@@ -206,13 +210,6 @@ public class ImagePreviewActivity extends AppCompatActivity {
             }
         });
 
-        mBackImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onDoneClick(false);
-            }
-        });
-
         mDoneLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -232,7 +229,6 @@ public class ImagePreviewActivity extends AppCompatActivity {
                 mTitleTextView.setText(viewPager.getCurrentItem() + 1 + "/" + images.size());
                 // 全部删光,关闭预览界面
                 if(selectImages.size() <= 0){
-//                    onDoneClick(true);
                     onResult(selectImages);
                 }
             }
@@ -269,8 +265,12 @@ public class ImagePreviewActivity extends AppCompatActivity {
     }
 
     public void switchBarVisibility() {
-        mTitleLayout.setVisibility(isShowBar ? View.GONE : View.VISIBLE);
-        mBottomLayout.setVisibility(isShowBar ? View.GONE : View.VISIBLE);
+        if(previewMode == 1){
+            mTitleLayout.setVisibility(isShowBar ? View.GONE : View.VISIBLE);
+        }else{
+            mTitleLayout.setVisibility(isShowBar ? View.GONE : View.VISIBLE);
+            mBottomLayout.setVisibility(isShowBar ? View.GONE : View.VISIBLE);
+        }
         isShowBar = !isShowBar;
     }
     public void onDoneClick(boolean isDone){

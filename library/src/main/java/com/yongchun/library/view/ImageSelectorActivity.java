@@ -198,10 +198,8 @@ public class ImageSelectorActivity extends AppCompatActivity {
                 if (enable) {
                     mDoneNumTextView.setVisibility(View.VISIBLE);
                     mDoneNumTextView.setText(String.valueOf(selectImages.size()));
-                    previewText.setText(getString(R.string.preview_num, selectImages.size()));
                 } else {
                     mDoneNumTextView.setVisibility(View.GONE);
-                    previewText.setText(R.string.preview);
                 }
             }
 
