@@ -69,7 +69,7 @@ public class FolderWindow extends PopupWindow {
     @Override
     public void showAsDropDown(View anchor) {
         super.showAsDropDown(anchor);
-        Animation animation = AnimationUtils.loadAnimation(context, R.anim.up_in);
+        Animation animation = AnimationUtils.loadAnimation(context, R.anim.down_in);
         recyclerView.startAnimation(animation);
     }
     public void setOnItemClickListener(ImageFolderAdapter.OnItemClickListener onItemClickListener){
@@ -81,7 +81,7 @@ public class FolderWindow extends PopupWindow {
             return;
         }
         isDismiss = true;
-        Animation animation = AnimationUtils.loadAnimation(context, R.anim.down_out);
+        Animation animation = AnimationUtils.loadAnimation(context, R.anim.up_out);
         recyclerView.startAnimation(animation);
         dismiss();
         animation.setAnimationListener(new Animation.AnimationListener() {

@@ -12,7 +12,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.yongchun.library.R;
@@ -58,10 +60,11 @@ public class ImageSelectorActivity extends AppCompatActivity {
 
     private int spanCount = 4;
 
-    private Toolbar toolbar;
-    private TextView doneText;
-
+    private RelativeLayout mTitleLayout;
     private TextView previewText;
+    private ImageButton mBackImageButton;
+    private LinearLayout mDoneLayout;
+    private TextView mDoneNumTextView;
 
     private RecyclerView recyclerView;
     private ImageListAdapter imageAdapter;
@@ -143,13 +146,13 @@ public class ImageSelectorActivity extends AppCompatActivity {
     public void initView() {
         folderWindow = new FolderWindow(this);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(R.string.picture);
-        setSupportActionBar(toolbar);
-        toolbar.setNavigationIcon(R.mipmap.ic_back);
 
-        doneText = (TextView) findViewById(R.id.done_text);
-        doneText.setVisibility(selectMode == MODE_MULTIPLE ? View.VISIBLE : View.GONE);
+        mTitleLayout = (RelativeLayout)findViewById(R.id.layout_title);
+        mBackImageButton = (ImageButton)findViewById(R.id.select_back_btn);
+        mDoneLayout = (LinearLayout)findViewById(R.id.done_layout);
+        mDoneNumTextView = (TextView)findViewById(R.id.done_num_text);
+
+        mDoneLayout.setVisibility(selectMode == MODE_MULTIPLE ? View.VISIBLE : View.GONE);
 
         previewText = (TextView) findViewById(R.id.preview_text);
         previewText.setVisibility(enablePreview ? View.VISIBLE : View.GONE);
@@ -168,7 +171,7 @@ public class ImageSelectorActivity extends AppCompatActivity {
     }
 
     public void registerListener() {
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        mBackImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -181,7 +184,7 @@ public class ImageSelectorActivity extends AppCompatActivity {
                 if (folderWindow.isShowing()) {
                     folderWindow.dismiss();
                 } else {
-                    folderWindow.showAsDropDown(toolbar);
+                    folderWindow.showAsDropDown(mTitleLayout);
                 }
             }
         });
@@ -190,13 +193,14 @@ public class ImageSelectorActivity extends AppCompatActivity {
             @Override
             public void onChange(List<LocalMedia> selectImages) {
                 boolean enable = selectImages.size() != 0;
-                doneText.setEnabled(enable ? true : false);
+                mDoneLayout.setEnabled(enable ? true : false);
                 previewText.setEnabled(enable ? true : false);
                 if (enable) {
-                    doneText.setText(getString(R.string.done_num, selectImages.size(), maxSelectNum));
+                    mDoneNumTextView.setVisibility(View.VISIBLE);
+                    mDoneNumTextView.setText(String.valueOf(selectImages.size()));
                     previewText.setText(getString(R.string.preview_num, selectImages.size()));
                 } else {
-                    doneText.setText(R.string.done);
+                    mDoneNumTextView.setVisibility(View.GONE);
                     previewText.setText(R.string.preview);
                 }
             }
@@ -217,7 +221,7 @@ public class ImageSelectorActivity extends AppCompatActivity {
                 }
             }
         });
-        doneText.setOnClickListener(new View.OnClickListener() {
+        mDoneLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onSelectDone(imageAdapter.getSelectedImages());
@@ -306,10 +310,6 @@ public class ImageSelectorActivity extends AppCompatActivity {
         ArrayList<String> images = new ArrayList<>();
         for (LocalMedia media : medias) {
             images.add(media.getPath());
-
-            Log.d("zr", "path = " + media.getPath());
-            Log.d("zr", "duration = " + media.getDuration());
-            Log.d("zr", "lastupdatetime = " + media.getLastUpdateAt());
         }
         onResult(images);
     }
