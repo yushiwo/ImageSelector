@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -70,13 +71,34 @@ public class ImageSelectorActivity extends AppCompatActivity {
 
     private String cameraPath;
 
-    public static void start(Activity activity, int maxSelectNum, int mode, boolean isShow, boolean enablePreview, boolean enableCrop) {
+
+    static ArrayList<LocalMedia> selectedImages;
+
+    /**
+     *
+     * @param activity
+     * @param maxSelectNum
+     * @param mode
+     * @param isShow
+     * @param enablePreview
+     * @param enableCrop
+     * @param selectedImageList 已经选中的部分图片列表
+     */
+    public static void start(Activity activity, int maxSelectNum, int mode, boolean isShow, boolean enablePreview, boolean enableCrop, ArrayList<String> selectedImageList) {
         Intent intent = new Intent(activity, ImageSelectorActivity.class);
         intent.putExtra(EXTRA_MAX_SELECT_NUM, maxSelectNum);
         intent.putExtra(EXTRA_SELECT_MODE, mode);
         intent.putExtra(EXTRA_SHOW_CAMERA, isShow);
         intent.putExtra(EXTRA_ENABLE_PREVIEW, enablePreview);
         intent.putExtra(EXTRA_ENABLE_CROP, enableCrop);
+
+        if(selectedImageList != null && selectedImageList.size() > 0){
+            selectedImages = new ArrayList<>();
+            for(int i = 0; i < selectedImageList.size(); i ++){
+                LocalMedia media = new LocalMedia(selectedImageList.get(i) ,0 ,0);
+                selectedImages.add(media);
+            }
+        }
         activity.startActivityForResult(intent, REQUEST_IMAGE);
     }
 
@@ -107,6 +129,9 @@ public class ImageSelectorActivity extends AppCompatActivity {
             public void loadComplete(List<LocalMediaFolder> folders) {
                 folderWindow.bindFolder(folders);
                 imageAdapter.bindImages(folders.get(0).getImages());
+                if(selectedImages != null && selectedImages.size() > 0){
+                    imageAdapter.bindSelectImages(selectedImages);
+                }
             }
         });
     }
@@ -232,6 +257,7 @@ public class ImageSelectorActivity extends AppCompatActivity {
                 }else{
                     imageAdapter.bindSelectImages(images);
                 }
+
             }
             // on crop success
             else if (requestCode == ImageCropActivity.REQUEST_CROP) {
@@ -276,6 +302,10 @@ public class ImageSelectorActivity extends AppCompatActivity {
         ArrayList<String> images = new ArrayList<>();
         for (LocalMedia media : medias) {
             images.add(media.getPath());
+
+            Log.d("zr", "path = " + media.getPath());
+            Log.d("zr", "duration = " + media.getDuration());
+            Log.d("zr", "lastupdatetime = " + media.getLastUpdateAt());
         }
         onResult(images);
     }

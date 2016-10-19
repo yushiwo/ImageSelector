@@ -8,8 +8,10 @@
         android:id="@+id/result_recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-    <ImageView
-        android:id="@+id/single_image"
+    <Button
+        android:id="@+id/add_more_btn"
+        android:text="添加更多"
+        android:layout_gravity="bottom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 </FrameLayout>

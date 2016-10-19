@@ -64,6 +64,15 @@ public class ImagePreviewActivity extends AppCompatActivity {
     private boolean isShowBar = true;
 
 
+    /**
+     *
+     * @param context
+     * @param images
+     * @param selectImages
+     * @param maxSelectNum
+     * @param position
+     * @param mode 预览的类型,是否可删除预览的图片
+     */
     public static void startPreview(Activity context, List<LocalMedia> images, List<LocalMedia> selectImages, int maxSelectNum, int position, int mode) {
         Intent intent = new Intent(context, ImagePreviewActivity.class);
         intent.putExtra(EXTRA_PREVIEW_LIST, (ArrayList) images);
