@@ -48,8 +48,8 @@ public class ImageFolderAdapter extends RecyclerView.Adapter<ImageFolderAdapter.
         final LocalMediaFolder folder = folders.get(position);
         Glide.with(context)
                 .load(new File(folder.getFirstImagePath()))
-                .placeholder(R.mipmap.ic_placeholder)
-                .error(R.mipmap.ic_placeholder)
+                .placeholder(R.drawable.ic_placeholder)
+                .error(R.drawable.ic_placeholder)
                 .centerCrop()
                 .into(holder.firstImage);
         holder.folderName.setText(folder.getName());

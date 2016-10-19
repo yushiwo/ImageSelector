@@ -97,8 +97,8 @@ public class ImageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     .load(new File(image.getPath()))
                     .centerCrop()
                     .thumbnail(0.5f)
-                    .placeholder(R.drawable.image_placeholder)
-                    .error(R.drawable.image_placeholder)
+                    .placeholder(R.drawable.ic_placeholder)
+                    .error(R.drawable.ic_placeholder)
                     .dontAnimate()
                     .into(contentHolder.picture);
 
