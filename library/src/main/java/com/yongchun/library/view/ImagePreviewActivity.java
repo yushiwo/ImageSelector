@@ -6,11 +6,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -25,9 +24,7 @@ import com.yongchun.library.widget.PreviewViewPager;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.yongchun.library.view.ImageSelectorActivity.REQUEST_IMAGE;
 import static com.yongchun.library.view.ImageSelectorActivity.REQUEST_OUTPUT;
-import static com.yongchun.library.view.ImageSelectorActivity.selectedImages;
 
 /**
  * Created by dee on 15/11/24.
@@ -44,16 +41,19 @@ public class ImagePreviewActivity extends AppCompatActivity {
     public static final String OUTPUT_ISDONE = "isDone";
 
 
-    private LinearLayout barLayout;
-    private RelativeLayout selectBarLayout;
-    private Toolbar toolbar;
-    private TextView doneText;
+    private RelativeLayout mBottomLayout;
     private CheckBox checkboxSelect;
     private PreviewViewPager viewPager;
     private SimplePreviewPagerAdapter mSimpleAdapter;
     private DeletePreviewPagerAdapter mDeleteAdapter;
+    private RelativeLayout mTitleLayout;
+    private ImageButton mBackImageButton;
+    private TextView mTitleTextView;
+    private LinearLayout mDoneLayout;
+    private TextView mDoneNumTextView;
 
     private Button mDeleteButton;
+
 
 
     private int position;
@@ -119,16 +119,16 @@ public class ImagePreviewActivity extends AppCompatActivity {
         position = getIntent().getIntExtra(EXTRA_POSITION, 1);
         previewMode = getIntent().getIntExtra(EXTRA_PREVIEW_MODE, 0);
 
-        barLayout = (LinearLayout) findViewById(R.id.bar_layout);
-        selectBarLayout = (RelativeLayout) findViewById(R.id.select_bar_layout);
+        mBottomLayout = (RelativeLayout) findViewById(R.id.select_bar_layout);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle((position + 1) + "/" + images.size());
-        setSupportActionBar(toolbar);
-        toolbar.setNavigationIcon(R.mipmap.ic_back);
+        mTitleLayout = (RelativeLayout)findViewById(R.id.layout_title);
+        mBackImageButton = (ImageButton)findViewById(R.id.select_back_btn);
+        mTitleTextView = (TextView)findViewById(R.id.title_text);
+        mDoneLayout = (LinearLayout)findViewById(R.id.done_layout);
+        mDoneNumTextView = (TextView)findViewById(R.id.done_num_text);
 
 
-        doneText = (TextView) findViewById(R.id.done_text);
+
         onSelectNumChange();
 
         checkboxSelect = (CheckBox) findViewById(R.id.checkbox_select);
@@ -161,7 +161,7 @@ public class ImagePreviewActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
-                toolbar.setTitle(position + 1 + "/" + images.size());
+                mTitleTextView.setText(position + 1 + "/" + images.size());
                 onImageSwitch(position);
             }
 
@@ -169,7 +169,8 @@ public class ImagePreviewActivity extends AppCompatActivity {
             public void onPageScrollStateChanged(int state) {
             }
         });
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+
+        mTitleLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(previewMode == 0){
@@ -179,6 +180,7 @@ public class ImagePreviewActivity extends AppCompatActivity {
                 }
             }
         });
+
         checkboxSelect.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("StringFormatMatches")
             @Override
@@ -204,7 +206,14 @@ public class ImagePreviewActivity extends AppCompatActivity {
             }
         });
 
-        doneText.setOnClickListener(new View.OnClickListener() {
+        mBackImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onDoneClick(false);
+            }
+        });
+
+        mDoneLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onDoneClick(true);
@@ -220,7 +229,7 @@ public class ImagePreviewActivity extends AppCompatActivity {
                 mDeleteAdapter.updateData(selectImages);
 
                 onSelectNumChange();
-                toolbar.setTitle(viewPager.getCurrentItem() + 1 + "/" + images.size());
+                mTitleTextView.setText(viewPager.getCurrentItem() + 1 + "/" + images.size());
                 // 全部删光,关闭预览界面
                 if(selectImages.size() <= 0){
 //                    onDoneClick(true);
@@ -233,11 +242,12 @@ public class ImagePreviewActivity extends AppCompatActivity {
     @SuppressLint("StringFormatMatches")
     public void onSelectNumChange() {
         boolean enable = selectImages.size() != 0;
-        doneText.setEnabled(enable);
+        mDoneLayout.setEnabled(enable);
         if (enable) {
-            doneText.setText(getString(R.string.done_num, selectImages.size(), maxSelectNum));
+            mDoneNumTextView.setVisibility(View.VISIBLE);
+            mDoneNumTextView.setText(String.valueOf(selectImages.size()));
         } else {
-            doneText.setText(R.string.done);
+            mDoneNumTextView.setVisibility(View.GONE);
         }
     }
 
@@ -259,9 +269,8 @@ public class ImagePreviewActivity extends AppCompatActivity {
     }
 
     public void switchBarVisibility() {
-        barLayout.setVisibility(isShowBar ? View.GONE : View.VISIBLE);
-        toolbar.setVisibility(isShowBar ? View.GONE : View.VISIBLE);
-        selectBarLayout.setVisibility(isShowBar ? View.GONE : View.VISIBLE);
+        mTitleLayout.setVisibility(isShowBar ? View.GONE : View.VISIBLE);
+        mBottomLayout.setVisibility(isShowBar ? View.GONE : View.VISIBLE);
         isShowBar = !isShowBar;
     }
     public void onDoneClick(boolean isDone){

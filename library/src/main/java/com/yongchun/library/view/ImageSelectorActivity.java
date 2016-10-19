@@ -238,7 +238,7 @@ public class ImageSelectorActivity extends AppCompatActivity {
         previewText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startPreview(imageAdapter.getSelectedImages(), 0, 1);
+                startPreview(imageAdapter.getSelectedImages(), 0, 0);
             }
         });
     }

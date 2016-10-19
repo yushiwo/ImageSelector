@@ -9,38 +9,45 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <LinearLayout
-        android:id="@+id/bar_layout"
+    <!-- 顶部导航栏 -->
+    <RelativeLayout
+        android:id="@+id/layout_title"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="48dp"
+        android:background="@color/bar_grey_90"
+        android:layout_alignParentTop="true"
+        >
 
-        <!--<View-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="@dimen/status_bar_height"-->
-            <!--android:background="@color/black" />-->
+        <ImageButton
+            android:id="@+id/select_back_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="left|center_vertical"
+            android:padding="12dp"
+            android:background="@drawable/selector_back_btn"
+            android:src="@drawable/ic_back" />
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            style="@style/MyToolbar"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/bar_height"
-            android:background="@color/bar_grey_90">
+        <TextView
+            android:id="@+id/title_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_toRightOf="@id/select_back_btn"
+            android:text="1/5"
+            android:textColor="@color/white"
+            android:textSize="@dimen/middle_text_size" />
 
-            <TextView
-                android:id="@+id/done_text"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/btn_height"
-                android:layout_gravity="right"
-                android:layout_marginRight="@dimen/margin_text"
-                android:background="@drawable/btn_round_green_selector"
-                android:enabled="false"
-                android:gravity="center"
-                android:text="@string/done"
-                android:textColor="@color/white_text_selector"
-                android:textSize="@dimen/small_text_size" />
-        </android.support.v7.widget.Toolbar>
-    </LinearLayout>
+        <CheckBox
+            android:id="@+id/checkbox_select"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:button="@drawable/checkbox_checktor"
+            android:gravity="center"
+            android:paddingRight="15dp" />
+
+    </RelativeLayout>
+
 
     <RelativeLayout
         android:id="@+id/select_bar_layout"
@@ -50,19 +57,37 @@
         android:background="@color/bar_grey_90"
         android:gravity="center_vertical">
 
-
-        <CheckBox
-            android:id="@+id/checkbox_select"
+        <LinearLayout
+            android:id="@+id/done_layout"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:orientation="horizontal"
             android:layout_alignParentRight="true"
-            android:button="@drawable/checkbox_checktor"
-            android:gravity="center"
-            android:paddingLeft="@dimen/margin_text"
-            android:paddingRight="@dimen/margin_layout"
-            android:text="@string/choose"
-            android:textColor="@color/white"
-            android:textSize="@dimen/middle_text_size" />
+            android:paddingRight="15dp"
+            >
+            <TextView
+                android:id="@+id/done_text"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:enabled="false"
+                android:textColor="@color/white_text_selector"
+                android:textSize="16sp"
+                android:paddingRight="5dp"
+                android:text="@string/done"/>
+            <TextView
+                android:id="@+id/done_num_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:gravity="center"
+                android:enabled="false"
+                android:background="@drawable/shape_done_num_background"
+                android:textColor="@color/white_text_selector"
+                android:textSize="16sp"
+                android:text="12"/>
+        </LinearLayout>
+
 
         <Button
             android:id="@+id/btn_delete"
